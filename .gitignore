@@ -1,0 +1,5 @@
+/project1/quartus/
+/project1/modelsim/
+/project1/waveforms/
+*.bak
+*.cmp
