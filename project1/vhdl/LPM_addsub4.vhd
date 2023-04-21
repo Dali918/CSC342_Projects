@@ -4,7 +4,7 @@
 -- MODULE: LPM_ADD_SUB 
 
 -- ============================================================
--- File Name: NBTIADDSUB_LPM_Banda.vhd
+-- File Name: fourbitLPMaddsub.vhd
 -- Megafunction Name(s):
 -- 			LPM_ADD_SUB
 --
@@ -40,25 +40,25 @@ USE ieee.std_logic_1164.all;
 LIBRARY lpm;
 USE lpm.all;
 
-ENTITY NBTIADDSUB_LPM_Banda IS
-	generic (n : integer := 4);
+ENTITY LPM_addsub4 IS
 	PORT
 	(
 		add_sub		: IN STD_LOGIC ;
-		dataa		: IN STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-		datab		: IN STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-		cout, zero, negative	: OUT STD_LOGIC ;
+		cin		: IN STD_LOGIC ;
+		dataa		: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
+		datab		: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
+		cout		: OUT STD_LOGIC ;
 		overflow		: OUT STD_LOGIC ;
-		result		: OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
+		result		: OUT STD_LOGIC_VECTOR (3 DOWNTO 0)
 	);
-END NBTIADDSUB_LPM_Banda;
+END LPM_addsub4;
 
 
-ARCHITECTURE SYN OF nbtiaddsub_lpm_banda IS
+ARCHITECTURE SYN OF LPM_addsub4 IS
 
 	SIGNAL sub_wire0	: STD_LOGIC ;
 	SIGNAL sub_wire1	: STD_LOGIC ;
-	SIGNAL sub_wire2	: STD_LOGIC_VECTOR (n-1 DOWNTO 0);
+	SIGNAL sub_wire2	: STD_LOGIC_VECTOR (3 DOWNTO 0);
 
 
 
@@ -72,33 +72,31 @@ ARCHITECTURE SYN OF nbtiaddsub_lpm_banda IS
 	);
 	PORT (
 			add_sub	: IN STD_LOGIC ;
-			dataa	: IN STD_LOGIC_VECTOR (n-1 DOWNTO 0);
-			datab	: IN STD_LOGIC_VECTOR (n-1 DOWNTO 0);
+			cin	: IN STD_LOGIC ;
+			dataa	: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
+			datab	: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
 			cout	: OUT STD_LOGIC ;
 			overflow	: OUT STD_LOGIC ;
-			result	: OUT STD_LOGIC_VECTOR (n-1 DOWNTO 0)
-			
+			result	: OUT STD_LOGIC_VECTOR (3 DOWNTO 0)
 	);
 	END COMPONENT;
 
 BEGIN
 	cout    <= sub_wire0;
 	overflow    <= sub_wire1;
-	result    <= sub_wire2(n-1 DOWNTO 0);
-	-- modified lpm for output flags
-	zero <= '1' when (sub_wire2 = (sub_wire2'range => '0')) else '0';
-	negative <= sub_wire2(n-1);
+	result    <= sub_wire2(3 DOWNTO 0);
 
 	LPM_ADD_SUB_component : LPM_ADD_SUB
 	GENERIC MAP (
 		lpm_direction => "UNUSED",
-		lpm_hint => "ONE_INPUT_IS_CONSTANT=NO,CIN_USED=NO",
+		lpm_hint => "ONE_INPUT_IS_CONSTANT=NO,CIN_USED=YES",
 		lpm_representation => "SIGNED",
 		lpm_type => "LPM_ADD_SUB",
-		lpm_width => n
+		lpm_width => 4
 	)
 	PORT MAP (
 		add_sub => add_sub,
+		cin => cin,
 		dataa => dataa,
 		datab => datab,
 		cout => sub_wire0,
@@ -113,7 +111,7 @@ END SYN;
 -- ============================================================
 -- CNX file retrieval info
 -- ============================================================
--- Retrieval info: PRIVATE: CarryIn NUMERIC "0"
+-- Retrieval info: PRIVATE: CarryIn NUMERIC "1"
 -- Retrieval info: PRIVATE: CarryOut NUMERIC "1"
 -- Retrieval info: PRIVATE: ConstantA NUMERIC "0"
 -- Retrieval info: PRIVATE: ConstantB NUMERIC "0"
@@ -125,7 +123,7 @@ END SYN;
 -- Retrieval info: PRIVATE: RadixA NUMERIC "10"
 -- Retrieval info: PRIVATE: RadixB NUMERIC "10"
 -- Retrieval info: PRIVATE: Representation NUMERIC "0"
--- Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "0"
+-- Retrieval info: PRIVATE: SYNTH_WRAPPER_GEN_POSTFIX STRING "1"
 -- Retrieval info: PRIVATE: ValidCtA NUMERIC "0"
 -- Retrieval info: PRIVATE: ValidCtB NUMERIC "0"
 -- Retrieval info: PRIVATE: WhichConstant NUMERIC "0"
@@ -135,25 +133,28 @@ END SYN;
 -- Retrieval info: PRIVATE: new_diagram STRING "1"
 -- Retrieval info: LIBRARY: lpm lpm.lpm_components.all
 -- Retrieval info: CONSTANT: LPM_DIRECTION STRING "UNUSED"
--- Retrieval info: CONSTANT: LPM_HINT STRING "ONE_INPUT_IS_CONSTANT=NO,CIN_USED=NO"
+-- Retrieval info: CONSTANT: LPM_HINT STRING "ONE_INPUT_IS_CONSTANT=NO,CIN_USED=YES"
 -- Retrieval info: CONSTANT: LPM_REPRESENTATION STRING "SIGNED"
 -- Retrieval info: CONSTANT: LPM_TYPE STRING "LPM_ADD_SUB"
 -- Retrieval info: CONSTANT: LPM_WIDTH NUMERIC "4"
 -- Retrieval info: USED_PORT: add_sub 0 0 0 0 INPUT NODEFVAL "add_sub"
+-- Retrieval info: USED_PORT: cin 0 0 0 0 INPUT NODEFVAL "cin"
 -- Retrieval info: USED_PORT: cout 0 0 0 0 OUTPUT NODEFVAL "cout"
 -- Retrieval info: USED_PORT: dataa 0 0 4 0 INPUT NODEFVAL "dataa[3..0]"
 -- Retrieval info: USED_PORT: datab 0 0 4 0 INPUT NODEFVAL "datab[3..0]"
 -- Retrieval info: USED_PORT: overflow 0 0 0 0 OUTPUT NODEFVAL "overflow"
 -- Retrieval info: USED_PORT: result 0 0 4 0 OUTPUT NODEFVAL "result[3..0]"
 -- Retrieval info: CONNECT: @add_sub 0 0 0 0 add_sub 0 0 0 0
+-- Retrieval info: CONNECT: @cin 0 0 0 0 cin 0 0 0 0
 -- Retrieval info: CONNECT: @dataa 0 0 4 0 dataa 0 0 4 0
 -- Retrieval info: CONNECT: @datab 0 0 4 0 datab 0 0 4 0
 -- Retrieval info: CONNECT: cout 0 0 0 0 @cout 0 0 0 0
 -- Retrieval info: CONNECT: overflow 0 0 0 0 @overflow 0 0 0 0
 -- Retrieval info: CONNECT: result 0 0 4 0 @result 0 0 4 0
--- Retrieval info: GEN_FILE: TYPE_NORMAL NBTIADDSUB_LPM_Banda.vhd TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL NBTIADDSUB_LPM_Banda.inc FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL NBTIADDSUB_LPM_Banda.cmp TRUE
--- Retrieval info: GEN_FILE: TYPE_NORMAL NBTIADDSUB_LPM_Banda.bsf FALSE
--- Retrieval info: GEN_FILE: TYPE_NORMAL NBTIADDSUB_LPM_Banda_inst.vhd FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL fourbitLPMaddsub.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL fourbitLPMaddsub.inc FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL fourbitLPMaddsub.cmp TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL fourbitLPMaddsub.bsf FALSE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL fourbitLPMaddsub_inst.vhd TRUE
+-- Retrieval info: GEN_FILE: TYPE_NORMAL fourbitLPMaddsub_syn.v TRUE
 -- Retrieval info: LIB_FILE: lpm
